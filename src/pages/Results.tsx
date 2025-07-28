@@ -4,15 +4,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Trophy, Calendar, Users, Filter } from "lucide-react";
+import { useSparkData } from "@/hooks/useSparkData";
 import Header from "@/components/Header";
 
 const Results: React.FC = () => {
-  // Mock data
-  const events = [
-    { id: '1', name: 'Poetry Recitation', category: 'Junior', type: 'Individual', house: 'Tagore', position: 1, points: 10, date: '2024-01-15' },
-    { id: '2', name: 'Group Dance', category: 'Senior', type: 'Group', house: 'Gandhi', position: 1, points: 20, date: '2024-01-16' },
-    { id: '3', name: 'Science Quiz', category: 'Middle', type: 'Individual', house: 'Nehru', position: 2, points: 7, date: '2024-01-17' }
-  ];
+  const { events } = useSparkData();
   const [filterCategory, setFilterCategory] = useState<string>('all');
   const [filterType, setFilterType] = useState<string>('all');
 
@@ -108,59 +104,69 @@ const Results: React.FC = () => {
         </Card>
 
         {/* Results Grid */}
-        <div className="grid gap-4">
-          {filteredEvents.map((event, index) => (
-            <Card 
-              key={event.id} 
-              className="hover:shadow-lg transition-all duration-300 animate-slide-up"
-              style={{ animationDelay: `${index * 0.1}s` }}
-            >
-              <CardContent className="p-6">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-2">
-                      <Trophy className="h-5 w-5 text-yellow-500" />
-                      <h3 className="text-xl font-semibold text-foreground">{event.name}</h3>
-                      <Badge className={getPositionBadge(event.position)}>
-                        {event.position === 1 ? '🥇 1st' : 
-                         event.position === 2 ? '🥈 2nd' : 
-                         event.position === 3 ? '🥉 3rd' : 
-                         `#${event.position}`}
-                      </Badge>
+        {events.length > 0 ? (
+          <div className="grid gap-4">
+            {filteredEvents.map((event, index) => (
+              <Card 
+                key={event.id} 
+                className="hover:shadow-lg transition-all duration-300 animate-slide-up"
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <CardContent className="p-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3 mb-2">
+                        <Trophy className="h-5 w-5 text-yellow-500" />
+                        <h3 className="text-xl font-semibold text-foreground">{event.name}</h3>
+                        <Badge className={getPositionBadge(event.position)}>
+                          {event.position === 1 ? '🥇 1st' : 
+                           event.position === 2 ? '🥈 2nd' : 
+                           event.position === 3 ? '🥉 3rd' : 
+                           `#${event.position}`}
+                        </Badge>
+                      </div>
+                      
+                      <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
+                        <div className="flex items-center space-x-1">
+                          <Calendar className="h-4 w-4" />
+                          <span>{new Date(event.date).toLocaleDateString()}</span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <Users className="h-4 w-4" />
+                          <span>{event.category} • {event.type}</span>
+                        </div>
+                      </div>
                     </div>
                     
-                    <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
-                      <div className="flex items-center space-x-1">
-                        <Calendar className="h-4 w-4" />
-                        <span>{new Date(event.date).toLocaleDateString()}</span>
-                      </div>
-                      <div className="flex items-center space-x-1">
-                        <Users className="h-4 w-4" />
-                        <span>{event.category} • {event.type}</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center space-x-4">
-                    <div className="text-right">
-                      <Badge 
-                        variant="outline" 
-                        className={`border-${getHouseColor(event.house)} text-${getHouseColor(event.house)}-foreground bg-${getHouseColor(event.house)}/10`}
-                      >
-                        {event.house}
-                      </Badge>
-                      <div className="text-lg font-bold text-foreground mt-1">
-                        +{event.points} pts
+                    <div className="flex items-center space-x-4">
+                      <div className="text-right">
+                        <Badge 
+                          variant="outline" 
+                          className={`border-${getHouseColor(event.house)} text-${getHouseColor(event.house)}-foreground bg-${getHouseColor(event.house)}/10`}
+                        >
+                          {event.house}
+                        </Badge>
+                        <div className="text-lg font-bold text-foreground mt-1">
+                          +{event.points} pts
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <Card className="text-center py-12">
+            <CardContent>
+              <Trophy className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-foreground mb-2">No Events Yet</h3>
+              <p className="text-muted-foreground">Add events through the admin panel to see results here.</p>
+            </CardContent>
+          </Card>
+        )}
 
-        {filteredEvents.length === 0 && (
+        {events.length > 0 && filteredEvents.length === 0 && (
           <Card className="text-center py-12">
             <CardContent>
               <Trophy className="h-12 w-12 text-muted-foreground mx-auto mb-4" />

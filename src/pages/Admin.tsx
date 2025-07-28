@@ -6,11 +6,14 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Trophy, BarChart3, Users, Search } from "lucide-react";
+import { useSparkData } from "@/hooks/useSparkData";
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import AddEventTemplateForm from "@/components/AddEventTemplateForm";
+import FirebaseInit from "@/components/FirebaseInit";
 
 const Admin: React.FC = () => {
+  const { events, eventTemplates, addEvent, calculatePoints } = useSparkData();
   const { toast } = useToast();
   const [eventSearchQuery, setEventSearchQuery] = useState('');
   
@@ -22,7 +25,7 @@ const Admin: React.FC = () => {
     position: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!eventForm.name || !eventForm.category || !eventForm.type || !eventForm.house || !eventForm.position) {
@@ -34,43 +37,41 @@ const Admin: React.FC = () => {
       return;
     }
 
-    toast({
-      title: "Event Added Successfully",
-      description: `${eventForm.house} earned points for ${eventForm.name}!`
-    });
+    try {
+      const points = calculatePoints(parseInt(eventForm.position), eventForm.type as 'Individual' | 'Group');
+      
+      await addEvent({
+        name: eventForm.name,
+        category: eventForm.category as 'Junior' | 'Middle' | 'Senior',
+        type: eventForm.type as 'Individual' | 'Group',
+        house: eventForm.house,
+        position: parseInt(eventForm.position),
+        date: new Date().toISOString().split('T')[0]
+      });
 
-    // Reset form
-    setEventForm({
-      name: '',
-      category: '',
-      type: '',
-      house: '',
-      position: ''
-    });
-  };
+      toast({
+        title: "Event Added Successfully",
+        description: `${eventForm.house} earned ${points} points for ${eventForm.name}!`
+      });
 
-  const calculatePoints = (position: number, type: 'Individual' | 'Group'): number => {
-    const individualScoring = { 1: 10, 2: 7, 3: 5, 4: 3, 5: 2, 6: 1 };
-    const groupScoring = { 1: 20, 2: 14, 3: 10, 4: 6 };
-    
-    if (type === 'Individual') {
-      return individualScoring[position as keyof typeof individualScoring] || 0;
-    } else {
-      return groupScoring[position as keyof typeof groupScoring] || 0;
+      // Reset form
+      setEventForm({
+        name: '',
+        category: '',
+        type: '',
+        house: '',
+        position: ''
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to add event. Please try again.",
+        variant: "destructive"
+      });
     }
   };
 
-  // Mock data for demonstration
-  const eventTemplates = [
-    { id: '1', name: 'Poetry Recitation', category: 'Junior', type: 'Individual' },
-    { id: '2', name: 'Group Dance', category: 'Senior', type: 'Group' },
-    { id: '3', name: 'Science Quiz', category: 'Middle', type: 'Individual' }
-  ];
-
-  const recentEvents = [
-    { id: '1', name: 'Poetry Recitation', house: 'Tagore', category: 'Junior', type: 'Individual', points: 10 },
-    { id: '2', name: 'Group Dance', house: 'Gandhi', category: 'Senior', type: 'Group', points: 20 }
-  ];
+  const recentEvents = events.slice(-5).reverse();
 
   return (
     <div className="min-h-screen bg-background">
@@ -224,6 +225,9 @@ const Admin: React.FC = () => {
 
           {/* Stats & Recent Events */}
           <div className="space-y-6">
+            {/* Firebase Initialization */}
+            <FirebaseInit />
+            
             {/* Quick Stats */}
             <Card>
               <CardHeader>

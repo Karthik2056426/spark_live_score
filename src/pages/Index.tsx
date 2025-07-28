@@ -4,29 +4,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Trophy, Zap, Calendar, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useSparkData } from "@/hooks/useSparkData";
 import Header from "@/components/Header";
 import WinnersCarousel from "@/components/WinnersCarousel";
 
 const Index = () => {
   const navigate = useNavigate();
-  
-  // Mock data
-  const houses = [
-    { name: 'Tagore', score: 285, rank: 1, color: 'tagore' },
-    { name: 'Gandhi', score: 240, rank: 2, color: 'gandhi' },
-    { name: 'Nehru', score: 195, rank: 3, color: 'nehru' },
-    { name: 'Delany', score: 180, rank: 4, color: 'delany' }
-  ];
-  
-  const events = [
-    { id: '1', name: 'Poetry Recitation', category: 'Junior', type: 'Individual', house: 'Tagore', position: 1, points: 10, date: '2024-01-15' },
-    { id: '2', name: 'Group Dance', category: 'Senior', type: 'Group', house: 'Gandhi', position: 1, points: 20, date: '2024-01-16' }
-  ];
-  
-  const winners = [
-    { id: '1', name: 'Arjun Sharma', event: 'Poetry Recitation', house: 'Tagore', position: 1, image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face' },
-    { id: '2', name: 'Priya Patel', event: 'Group Dance', house: 'Gandhi', position: 1, image: 'https://images.unsplash.com/photo-1494790108755-2616b612b1d4?w=150&h=150&fit=crop&crop=face' }
-  ];
+  const { houses, events, winners } = useSparkData();
 
   return (
     <div className="min-h-screen bg-background">
@@ -75,21 +59,29 @@ const Index = () => {
             <p className="text-muted-foreground">Real-time rankings from all SPARK events</p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {houses.map((house, index) => (
-              <div key={house.name} style={{ animationDelay: `${index * 0.2}s` }}>
-                <Card className="hover:shadow-lg transition-all duration-300 border-2 border-primary/20">
-                  <CardContent className="p-6 text-center">
-                    <div className="text-3xl font-bold text-foreground mb-2">{house.name}</div>
-                    <div className="text-2xl font-bold text-primary mb-2">{house.score} pts</div>
-                    <Badge variant="outline" className="text-sm">
-                      #{house.rank} Place
-                    </Badge>
-                  </CardContent>
-                </Card>
-              </div>
-            ))}
-          </div>
+          {houses.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {houses.map((house, index) => (
+                <div key={house.name} style={{ animationDelay: `${index * 0.2}s` }}>
+                  <Card className="hover:shadow-lg transition-all duration-300 border-2 border-primary/20">
+                    <CardContent className="p-6 text-center">
+                      <div className="text-3xl font-bold text-foreground mb-2">{house.name}</div>
+                      <div className="text-2xl font-bold text-primary mb-2">{house.score} pts</div>
+                      <Badge variant="outline" className="text-sm">
+                        #{house.rank} Place
+                      </Badge>
+                    </CardContent>
+                  </Card>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <Trophy className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-foreground mb-2">No House Data</h3>
+              <p className="text-muted-foreground">Initialize the database to see house standings.</p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -115,54 +107,62 @@ const Index = () => {
             <p className="text-muted-foreground">Celebrating our latest champions</p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {winners.slice(0, 3).map((winner, index) => {
-              const getHouseColor = (houseName: string) => {
-                switch (houseName.toLowerCase()) {
-                  case 'tagore': return 'border-tagore bg-tagore/10 hover:bg-tagore/20';
-                  case 'delany': return 'border-delany bg-delany/10 hover:bg-delany/20';
-                  case 'gandhi': return 'border-gandhi bg-gandhi/10 hover:bg-gandhi/20';
-                  case 'nehru': return 'border-nehru bg-nehru/10 hover:bg-nehru/20';
-                  default: return 'border-border bg-secondary/10 hover:bg-secondary/20';
-                }
-              };
+          {winners.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {winners.slice(0, 3).map((winner, index) => {
+                const getHouseColor = (houseName: string) => {
+                  switch (houseName.toLowerCase()) {
+                    case 'tagore': return 'border-tagore bg-tagore/10 hover:bg-tagore/20';
+                    case 'delany': return 'border-delany bg-delany/10 hover:bg-delany/20';
+                    case 'gandhi': return 'border-gandhi bg-gandhi/10 hover:bg-gandhi/20';
+                    case 'nehru': return 'border-nehru bg-nehru/10 hover:bg-nehru/20';
+                    default: return 'border-border bg-secondary/10 hover:bg-secondary/20';
+                  }
+                };
 
-              return (
-                <Card 
-                  key={winner.id} 
-                  className={`hover:shadow-xl hover:scale-105 transition-all duration-500 animate-slide-up border-2 ${getHouseColor(winner.house)} cursor-pointer group`} 
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                  onClick={() => navigate('/winners')}
-                >
-                  <CardContent className="p-6 text-center">
-                    {/* Winner Photo */}
-                    <div className="w-16 h-16 mx-auto mb-4 rounded-full overflow-hidden bg-secondary/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                      {winner.image ? (
-                        <img 
-                          src={winner.image} 
-                          alt={winner.name}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <Trophy className="h-8 w-8 text-muted-foreground" />
-                      )}
-                    </div>
-                    <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors duration-300">{winner.name}</h3>
-                    <p className="text-muted-foreground mb-3">{winner.event}</p>
-                    <Badge variant="outline" className={`${getHouseColor(winner.house)} border-current transition-all duration-300`}>
-                      {winner.house} House
-                    </Badge>
-                    <div className="mt-3 text-sm text-muted-foreground">
-                      {winner.position === 1 ? '🥇 First Place' : 
-                       winner.position === 2 ? '🥈 Second Place' : 
-                       winner.position === 3 ? '🥉 Third Place' : 
-                       `#${winner.position}`}
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
+                return (
+                  <Card 
+                    key={winner.id} 
+                    className={`hover:shadow-xl hover:scale-105 transition-all duration-500 animate-slide-up border-2 ${getHouseColor(winner.house)} cursor-pointer group`} 
+                    style={{ animationDelay: `${index * 0.1}s` }}
+                    onClick={() => navigate('/winners')}
+                  >
+                    <CardContent className="p-6 text-center">
+                      {/* Winner Photo */}
+                      <div className="w-16 h-16 mx-auto mb-4 rounded-full overflow-hidden bg-secondary/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        {winner.image ? (
+                          <img 
+                            src={winner.image} 
+                            alt={winner.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <Trophy className="h-8 w-8 text-muted-foreground" />
+                        )}
+                      </div>
+                      <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors duration-300">{winner.name}</h3>
+                      <p className="text-muted-foreground mb-3">{winner.event}</p>
+                      <Badge variant="outline" className={`${getHouseColor(winner.house)} border-current transition-all duration-300`}>
+                        {winner.house} House
+                      </Badge>
+                      <div className="mt-3 text-sm text-muted-foreground">
+                        {winner.position === 1 ? '🥇 First Place' : 
+                         winner.position === 2 ? '🥈 Second Place' : 
+                         winner.position === 3 ? '🥉 Third Place' : 
+                         `#${winner.position}`}
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <Trophy className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-foreground mb-2">No Winners Yet</h3>
+              <p className="text-muted-foreground">Add events and winners to see them here.</p>
+            </div>
+          )}
         </div>
       </section>
 
