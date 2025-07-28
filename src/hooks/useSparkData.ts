@@ -21,40 +21,65 @@ export const useSparkData = () => {
     }
   };
 
-  // Set up real-time listeners
+  // Set up real-time listeners and initialize if needed
   useEffect(() => {
     setLoading(true);
 
-    // Subscribe to houses changes
-    const unsubscribeHouses = housesService.subscribeToHouses((houses) => {
-      setHouses(houses);
-    });
+    const initializeIfNeeded = async () => {
+      try {
+        // Check if houses exist, if not create initial structure
+        const existingHouses = await housesService.getHouses();
+        if (existingHouses.length === 0) {
+          // Initialize houses with zero scores
+          const initialHouses = [
+            { name: 'Tagore', score: 0, rank: 1, color: 'tagore' as const },
+            { name: 'Gandhi', score: 0, rank: 2, color: 'gandhi' as const },
+            { name: 'Nehru', score: 0, rank: 3, color: 'nehru' as const },
+            { name: 'Delany', score: 0, rank: 4, color: 'delany' as const }
+          ];
 
-    // Subscribe to events changes
-    const unsubscribeEvents = eventsService.subscribeToEvents((events) => {
-      setEvents(events);
-    });
-
-    // Subscribe to winners changes
-    const unsubscribeWinners = winnersService.subscribeToWinners((winners) => {
-      setWinners(winners);
-    });
-
-    // Subscribe to event templates changes
-    const unsubscribeTemplates = eventTemplatesService.subscribeToEventTemplates((templates) => {
-      setEventTemplates(templates);
-    });
-
-    // Set loading to false after initial load
-    const timer = setTimeout(() => setLoading(false), 1000);
-
-    return () => {
-      unsubscribeHouses();
-      unsubscribeEvents();
-      unsubscribeWinners();
-      unsubscribeTemplates();
-      clearTimeout(timer);
+          for (const house of initialHouses) {
+            await housesService.addHouse(house);
+          }
+        }
+      } catch (error) {
+        console.error('Error initializing houses:', error);
+      }
     };
+
+    // Initialize and set up listeners
+    initializeIfNeeded().then(() => {
+      // Subscribe to houses changes
+      const unsubscribeHouses = housesService.subscribeToHouses((houses) => {
+        setHouses(houses);
+      });
+
+      // Subscribe to events changes
+      const unsubscribeEvents = eventsService.subscribeToEvents((events) => {
+        setEvents(events);
+      });
+
+      // Subscribe to winners changes
+      const unsubscribeWinners = winnersService.subscribeToWinners((winners) => {
+        setWinners(winners);
+      });
+
+      // Subscribe to event templates changes
+      const unsubscribeTemplates = eventTemplatesService.subscribeToEventTemplates((templates) => {
+        setEventTemplates(templates);
+      });
+
+      // Set loading to false after initial load
+      const timer = setTimeout(() => setLoading(false), 1000);
+
+      return () => {
+        unsubscribeHouses();
+        unsubscribeEvents();
+        unsubscribeWinners();
+        unsubscribeTemplates();
+        clearTimeout(timer);
+      };
+    });
   }, []);
 
   // Add new event (for admin)

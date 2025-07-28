@@ -10,7 +10,7 @@ import { useSparkData } from "@/hooks/useSparkData";
 import { useToast } from "@/hooks/use-toast";
 import Header from "@/components/Header";
 import AddEventTemplateForm from "@/components/AddEventTemplateForm";
-import FirebaseInit from "@/components/FirebaseInit";
+
 
 const Admin: React.FC = () => {
   const { events, eventTemplates, addEvent, calculatePoints } = useSparkData();
@@ -225,9 +225,6 @@ const Admin: React.FC = () => {
 
           {/* Stats & Recent Events */}
           <div className="space-y-6">
-            {/* Firebase Initialization */}
-            <FirebaseInit />
-            
             {/* Quick Stats */}
             <Card>
               <CardHeader>
