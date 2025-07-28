@@ -4,11 +4,15 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Trophy, Calendar, Users, Filter } from "lucide-react";
-import { useSparkData } from "@/hooks/useSparkData";
 import Header from "@/components/Header";
 
 const Results: React.FC = () => {
-  const { events } = useSparkData();
+  // Mock data
+  const events = [
+    { id: '1', name: 'Poetry Recitation', category: 'Junior', type: 'Individual', house: 'Tagore', position: 1, points: 10, date: '2024-01-15' },
+    { id: '2', name: 'Group Dance', category: 'Senior', type: 'Group', house: 'Gandhi', position: 1, points: 20, date: '2024-01-16' },
+    { id: '3', name: 'Science Quiz', category: 'Middle', type: 'Individual', house: 'Nehru', position: 2, points: 7, date: '2024-01-17' }
+  ];
   const [filterCategory, setFilterCategory] = useState<string>('all');
   const [filterType, setFilterType] = useState<string>('all');
 

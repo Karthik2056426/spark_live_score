@@ -5,20 +5,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Trophy, BarChart3, Users, Search, Camera } from "lucide-react";
-import { useSparkData } from "@/hooks/useSparkData";
+import { Plus, Trophy, BarChart3, Users, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useState as useReactState } from "react";
 import Header from "@/components/Header";
 import AddEventTemplateForm from "@/components/AddEventTemplateForm";
-import AddWinnerPhotoForm from "@/components/AddWinnerPhotoForm";
-import FirebaseInit from "@/components/FirebaseInit";
-import FirebaseDebug from "@/components/FirebaseDebug";
 
 const Admin: React.FC = () => {
-  const { events, eventTemplates, addEvent, calculatePoints } = useSparkData();
   const { toast } = useToast();
-  const [eventSearchQuery, setEventSearchQuery] = useReactState('');
+  const [eventSearchQuery, setEventSearchQuery] = useState('');
   
   const [eventForm, setEventForm] = useState({
     name: '',
@@ -40,20 +34,9 @@ const Admin: React.FC = () => {
       return;
     }
 
-    const points = calculatePoints(parseInt(eventForm.position), eventForm.type as 'Individual' | 'Group');
-    
-    addEvent({
-      name: eventForm.name,
-      category: eventForm.category as 'Junior' | 'Middle' | 'Senior',
-      type: eventForm.type as 'Individual' | 'Group',
-      house: eventForm.house,
-      position: parseInt(eventForm.position),
-      date: new Date().toISOString().split('T')[0]
-    });
-
     toast({
       title: "Event Added Successfully",
-      description: `${eventForm.house} earned ${points} points for ${eventForm.name}!`
+      description: `${eventForm.house} earned points for ${eventForm.name}!`
     });
 
     // Reset form
@@ -66,7 +49,28 @@ const Admin: React.FC = () => {
     });
   };
 
-  const recentEvents = events.slice(-5).reverse();
+  const calculatePoints = (position: number, type: 'Individual' | 'Group'): number => {
+    const individualScoring = { 1: 10, 2: 7, 3: 5, 4: 3, 5: 2, 6: 1 };
+    const groupScoring = { 1: 20, 2: 14, 3: 10, 4: 6 };
+    
+    if (type === 'Individual') {
+      return individualScoring[position as keyof typeof individualScoring] || 0;
+    } else {
+      return groupScoring[position as keyof typeof groupScoring] || 0;
+    }
+  };
+
+  // Mock data for demonstration
+  const eventTemplates = [
+    { id: '1', name: 'Poetry Recitation', category: 'Junior', type: 'Individual' },
+    { id: '2', name: 'Group Dance', category: 'Senior', type: 'Group' },
+    { id: '3', name: 'Science Quiz', category: 'Middle', type: 'Individual' }
+  ];
+
+  const recentEvents = [
+    { id: '1', name: 'Poetry Recitation', house: 'Tagore', category: 'Junior', type: 'Individual', points: 10 },
+    { id: '2', name: 'Group Dance', house: 'Gandhi', category: 'Senior', type: 'Group', points: 20 }
+  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -220,16 +224,7 @@ const Admin: React.FC = () => {
 
           {/* Stats & Recent Events */}
           <div className="space-y-6">
-                      {/* Firebase Debug */}
-          <FirebaseDebug />
-          
-          {/* Firebase Initialization */}
-          <FirebaseInit />
-          
-          {/* Add Winner Photo */}
-          <AddWinnerPhotoForm />
-          
-          {/* Quick Stats */}
+            {/* Quick Stats */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
@@ -240,15 +235,15 @@ const Admin: React.FC = () => {
               <CardContent className="space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Total Events</span>
-                  <span className="font-bold text-xl">{events.length}</span>
+                  <span className="font-bold text-xl">{recentEvents.length}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Individual Events</span>
-                  <span className="font-bold">{events.filter(e => e.type === 'Individual').length}</span>
+                  <span className="font-bold">{recentEvents.filter(e => e.type === 'Individual').length}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-muted-foreground">Group Events</span>
-                  <span className="font-bold">{events.filter(e => e.type === 'Group').length}</span>
+                  <span className="font-bold">{recentEvents.filter(e => e.type === 'Group').length}</span>
                 </div>
               </CardContent>
             </Card>

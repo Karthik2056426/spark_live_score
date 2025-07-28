@@ -4,14 +4,29 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Trophy, Zap, Calendar, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useSparkData } from "@/hooks/useSparkData";
-import HouseCard from "@/components/HouseCard";
 import Header from "@/components/Header";
 import WinnersCarousel from "@/components/WinnersCarousel";
 
 const Index = () => {
   const navigate = useNavigate();
-  const { houses, events, winners } = useSparkData();
+  
+  // Mock data
+  const houses = [
+    { name: 'Tagore', score: 285, rank: 1, color: 'tagore' },
+    { name: 'Gandhi', score: 240, rank: 2, color: 'gandhi' },
+    { name: 'Nehru', score: 195, rank: 3, color: 'nehru' },
+    { name: 'Delany', score: 180, rank: 4, color: 'delany' }
+  ];
+  
+  const events = [
+    { id: '1', name: 'Poetry Recitation', category: 'Junior', type: 'Individual', house: 'Tagore', position: 1, points: 10, date: '2024-01-15' },
+    { id: '2', name: 'Group Dance', category: 'Senior', type: 'Group', house: 'Gandhi', position: 1, points: 20, date: '2024-01-16' }
+  ];
+  
+  const winners = [
+    { id: '1', name: 'Arjun Sharma', event: 'Poetry Recitation', house: 'Tagore', position: 1, image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face' },
+    { id: '2', name: 'Priya Patel', event: 'Group Dance', house: 'Gandhi', position: 1, image: 'https://images.unsplash.com/photo-1494790108755-2616b612b1d4?w=150&h=150&fit=crop&crop=face' }
+  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -63,7 +78,15 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {houses.map((house, index) => (
               <div key={house.name} style={{ animationDelay: `${index * 0.2}s` }}>
-                <HouseCard house={house} />
+                <Card className="hover:shadow-lg transition-all duration-300 border-2 border-primary/20">
+                  <CardContent className="p-6 text-center">
+                    <div className="text-3xl font-bold text-foreground mb-2">{house.name}</div>
+                    <div className="text-2xl font-bold text-primary mb-2">{house.score} pts</div>
+                    <Badge variant="outline" className="text-sm">
+                      #{house.rank} Place
+                    </Badge>
+                  </CardContent>
+                </Card>
               </div>
             ))}
           </div>

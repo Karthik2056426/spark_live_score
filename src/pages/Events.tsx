@@ -2,11 +2,17 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Trophy, Users } from "lucide-react";
-import { useSparkData } from "@/hooks/useSparkData";
 import Header from "@/components/Header";
 
 const Events = () => {
-  const { events } = useSparkData();
+  // Mock data
+  const events = [
+    { id: '1', name: 'Poetry Recitation', category: 'Junior', type: 'Individual', house: 'Tagore', position: 1, points: 10, date: '2024-01-15' },
+    { id: '2', name: 'Group Dance', category: 'Senior', type: 'Group', house: 'Gandhi', position: 1, points: 20, date: '2024-01-16' },
+    { id: '3', name: 'Science Quiz', category: 'Middle', type: 'Individual', house: 'Nehru', position: 2, points: 7, date: '2024-01-17' },
+    { id: '4', name: 'Drama Competition', category: 'Senior', type: 'Group', house: 'Delany', position: 1, points: 20, date: '2024-01-18' },
+    { id: '5', name: 'Art Exhibition', category: 'All', type: 'Individual', house: 'Tagore', position: 3, points: 5, date: '2024-01-19' }
+  ];
 
   return (
     <div className="min-h-screen bg-background">
