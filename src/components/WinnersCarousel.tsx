@@ -2,10 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Trophy } from "lucide-react";
-import { useSparkData } from "@/hooks/useSparkData";
+
 
 const WinnersCarousel: React.FC = () => {
-  const { winners, houses } = useSparkData();
+  // Mock data
+  const winners = [
+    { id: '1', name: 'Arjun Sharma', event: 'Poetry Recitation', house: 'Tagore', position: 1, image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face' },
+    { id: '2', name: 'Priya Patel', event: 'Group Dance', house: 'Gandhi', position: 1, image: 'https://images.unsplash.com/photo-1494790108755-2616b612b1d4?w=150&h=150&fit=crop&crop=face' },
+    { id: '3', name: 'Rahul Singh', event: 'Science Quiz', house: 'Nehru', position: 2, image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face' }
+  ];
+  
+  const houses = [
+    { name: 'Tagore', color: 'tagore' },
+    { name: 'Gandhi', color: 'gandhi' },
+    { name: 'Nehru', color: 'nehru' },
+    { name: 'Delany', color: 'delany' }
+  ];
+  
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {

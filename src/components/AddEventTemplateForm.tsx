@@ -6,11 +6,9 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus } from "lucide-react";
-import { useSparkData } from "@/hooks/useSparkData";
 import { useToast } from "@/hooks/use-toast";
 
 const AddEventTemplateForm: React.FC = () => {
-  const { addEventTemplate } = useSparkData();
   const { toast } = useToast();
   
   const [eventForm, setEventForm] = useState({
@@ -34,38 +32,21 @@ const AddEventTemplateForm: React.FC = () => {
       return;
     }
 
-    try {
-      await addEventTemplate({
-        name: eventForm.name,
-        category: eventForm.category,
-        type: eventForm.type as 'Individual' | 'Group',
-        description: eventForm.description || undefined,
-        time: eventForm.time || undefined,
-        venue: eventForm.venue || undefined
-      });
+    // Simulate adding event template (no actual backend)
+    toast({
+      title: "Event Template Created Successfully",
+      description: `${eventForm.name} has been added to the event list!`
+    });
 
-      toast({
-        title: "Event Created Successfully",
-        description: `${eventForm.name} has been added to the event list!`
-      });
-
-      // Reset form
-      setEventForm({
-        name: '',
-        category: '',
-        type: '',
-        description: '',
-        time: '',
-        venue: ''
-      });
-    } catch (error) {
-      console.error('Error adding event template:', error);
-      toast({
-        title: "Error",
-        description: "Failed to add event template. Please try again.",
-        variant: "destructive"
-      });
-    }
+    // Reset form
+    setEventForm({
+      name: '',
+      category: '',
+      type: '',
+      description: '',
+      time: '',
+      venue: ''
+    });
   };
 
   return (
