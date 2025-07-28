@@ -82,16 +82,21 @@ const Admin: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Add Event Templates Form */}
           <div className="lg:col-span-2 space-y-6">
-            <AddEventTemplateForm />
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Step 1: Create Event Templates</h3>
+              <AddEventTemplateForm />
+            </div>
             
             {/* Add Event Result */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Plus className="h-5 w-5" />
-                  <span>Add New Event Result</span>
-                </CardTitle>
-              </CardHeader>
+            <div>
+              <h3 className="text-lg font-semibold mb-4">Step 2: Add Event Results</h3>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Plus className="h-5 w-5" />
+                    <span>Add New Event Result</span>
+                  </CardTitle>
+                </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -99,7 +104,15 @@ const Admin: React.FC = () => {
                        <Label htmlFor="eventName">Event Name</Label>
                        <div className="relative">
                          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                         <Select value={eventForm.name} onValueChange={(value) => setEventForm({...eventForm, name: value})}>
+                         <Select value={eventForm.name} onValueChange={(value) => {
+                           const selectedTemplate = eventTemplates.find(template => template.name === value);
+                           setEventForm({
+                             ...eventForm, 
+                             name: value,
+                             category: selectedTemplate?.category || eventForm.category,
+                             type: selectedTemplate?.type || eventForm.type
+                           });
+                         }}>
                            <SelectTrigger className="pl-10">
                              <SelectValue placeholder="Search and select event" />
                            </SelectTrigger>
@@ -202,6 +215,7 @@ const Admin: React.FC = () => {
                 </form>
               </CardContent>
             </Card>
+            </div>
           </div>
 
           {/* Stats & Recent Events */}

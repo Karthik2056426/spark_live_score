@@ -73,10 +73,13 @@ const AddEventTemplateForm: React.FC = () => {
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
           <Plus className="h-5 w-5" />
-          <span>Add New Event</span>
+          <span>Add Event Template</span>
         </CardTitle>
       </CardHeader>
       <CardContent>
+        <p className="text-sm text-muted-foreground mb-4">
+          Create event templates that will appear in the dropdown when adding results.
+        </p>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
@@ -158,7 +161,7 @@ const AddEventTemplateForm: React.FC = () => {
           
           <Button type="submit" className="w-full">
             <Plus className="h-4 w-4 mr-2" />
-            Add Event
+            Add Event Template
           </Button>
         </form>
       </CardContent>
