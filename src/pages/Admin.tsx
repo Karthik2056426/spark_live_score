@@ -13,6 +13,7 @@ import Header from "@/components/Header";
 import AddEventTemplateForm from "@/components/AddEventTemplateForm";
 import AddWinnerPhotoForm from "@/components/AddWinnerPhotoForm";
 import FirebaseInit from "@/components/FirebaseInit";
+import FirebaseDebug from "@/components/FirebaseDebug";
 
 const Admin: React.FC = () => {
   const { events, eventTemplates, addEvent, calculatePoints } = useSparkData();
@@ -205,7 +206,10 @@ const Admin: React.FC = () => {
 
           {/* Stats & Recent Events */}
           <div className="space-y-6">
-                      {/* Firebase Initialization */}
+                      {/* Firebase Debug */}
+          <FirebaseDebug />
+          
+          {/* Firebase Initialization */}
           <FirebaseInit />
           
           {/* Add Winner Photo */}
